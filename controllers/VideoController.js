@@ -11,7 +11,27 @@ const index = async(req, res, next)=>{
 }
 
 const store= async(req, res, next) =>{
-    const result = await cloudinary.uploader.upload(req.file.path)
+    const nm = req.body.name 
+    const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type : "video", 
+        public_id : nm,
+        chunk_size : 6000000 ,
+        is_audio :true,
+        eager : [
+            { width: 300, height : 300, crop: "pad", audio_codec : "none"},
+            { width : 160, height : 100, crop: "crop", gravity : "south", audio_codec : "none"}
+        ], 
+        overwrite : true, 
+        eager_async : true,
+        format : "mp4",
+        transformation : [
+            { end_offset : "30", }
+        ]
+    },
+    function (error, result) {
+        console.log(result, error)
+    }
+    )
     const user = await User.findById(req.body.name)
     const newvideo = new Video({
         video : result.secure_url

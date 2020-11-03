@@ -14,7 +14,7 @@ const multer = require('multer')
 var upload = multer({
     storage : multer.diskStorage({}),
     fileFilter : (req, file, callback)=>{
-        if(file.mimetype.match(/jpe|jpeg|png|$i/))
+        if(file.mimetype.match(/mp4|avi|mkv|mov|$i/))
         {
             callback(null, true)
             console.log("Done!")

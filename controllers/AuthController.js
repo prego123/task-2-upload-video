@@ -59,7 +59,23 @@ const getUserVideos = async(req, res, next)=>{
 
 const newUserVideos = async(req, res, next)=>{
     const { id } = req.params
-    const result = await cloudinary.uploader.upload(req.file.path)
+    const nm = id
+    const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type : "video", 
+        chunk_size : 6000000 ,
+        public_id : nm,
+        is_audio :true,
+        eager : [
+            { width: 300, height : 300, crop: "pad", audio_codec : "none"},
+            { width : 160, height : 100, crop: "crop", gravity : "south", audio_codec : "none"}
+        ], 
+        overwrite : true, 
+        eager_async : true
+    },
+    function (error, result) {
+        console.log(result, error)
+    }
+    )
     const newVideo = new Video({
         video : result.secure_url
     })

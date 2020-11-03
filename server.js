@@ -3,7 +3,7 @@ const mongoose=require('mongoose')
 const morgan=require('morgan')
 const bodyParser=require('body-parser')
 
-const EmployeeRoute = require('./routes/video')
+const VideosRoute = require('./routes/video')
 const AuthRoute = require('./routes/auth')
 
 mongoose.connect('mongodb://localhost:27017/testdb', {useNewUrlParser: true, useUnifiedTopology : true})
@@ -27,8 +27,8 @@ app.use('/uploads', express.static('uploads'))
 const PORT=process.env.PORT || 3000
 
 app.listen(PORT, ()=> {
-    console.log('Server is running on port ${PORT} ')
+    console.log(`Server is running on port ${PORT} `)
 })
 
-app.use('/api/employee', EmployeeRoute)
-app.use('/api', AuthRoute)
+app.use('/api/user', AuthRoute)
+app.use('/api/video', VideosRoute)

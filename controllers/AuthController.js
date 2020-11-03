@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const Video = require('../models/Video')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -29,40 +30,54 @@ const register = (req, res, next) =>{
     })
 }
 
-const login = (req, res, next)=>{
-    var username = req.body.username
-    var password = req.body.password
-    User.findOne({$or : [{email : username}]})
+const index = async(req, res, next)=>{
+    const users = await User.find({})
     .then(user => {
-        if (user){
-            bcrypt.compare(password, user.password, function(err, result){
-                if(err){
-                    res.json({
-                        error : err
-                    })
-                }
-                if(result){
-                    let token = jwt.sign({name: user.name}, 'SecretValue', {expiresIn : '1h'})
-                    res.json({
-                        message : 'Login successfully',
-                        token
-                    })
-                }
-                else {
-                    res.json({
-                        message : 'Password does not match!'
-                    })
-                }
-            })
-        }
-        else{
-            res.json({
-                message : 'No user found'
-            })
-        }
+        res.json(users)
+    }).catch((error)=>{
+        res.json({
+            message : 'No user found'
+        })
+    })
+}
+
+const getUser = async(req, res, next) =>{
+    const users = await User.findById(eq.value.params.id)
+    .then(user => {
+        res.json(users)
+    })
+}
+
+const getUserVideos = async(req, res, next)=>{
+    const { id } = req.params
+    const user = await User.findById(id).populate('videos')
+    .then(user => {
+        res.json(user)
+    })
+}
+
+const newUserVideos = async(req, res, next)=>{
+    const { id } = req.params
+
+    const newVideo = new Video()
+    if(req.file)
+    {
+        newVideo.video = req.file.path
+    }
+
+    const us = await User.findById(id)
+
+    newVideo.name= us
+
+    await newVideo.save()
+
+    us.video.push(newVideo)
+    await us.save()
+    .then(user => {
+        res.json(us)
     })
 }
 
 module.exports ={
-    register, login
+    register, index, getUser, getUserVideos, newUserVideos
 }

@@ -1,52 +1,44 @@
 const { response } = require('express')
-const Employee = require('../models/Videos')
+const User = require('../models/User')
+const Video = require('../models/Video')
 
-const index = (req, res, next) => {
-    Employee.find()
-    .then(response => {
-        res.json({
-            response
-        })
-    })
-    .catch(error => {
-        res.json({
-            message : "An error occured!"
-        })
+const index = async(req, res, next)=>{
+    const video = await Video.find({})
+    .then((user)=>{
+        res.json(video)
     })
 }
 
-const show = (req, res, next) => {
-    let employeeID = req.body.employeeID
-    Employee.findById(employeeID)
-    .then(response =>{
-        res.json({
-            response
-        })
-    })
-    .catch(error =>{
-        res.join({
-            message :'An error occured!'
-        })
-    })
-}
+const store= async(req, res, next) =>{
 
-const store= (req, res, next) =>{
-    let employee = new Employee({
+    const user = await User.findById(req.body.name)
+    const newvideo = new Video({
         video : req.file.path
     })
-    employee.save()
-    .then((response)=>{
+    
+    delete newvideo.name
+
+    const nvideo = new Video(newvideo)
+    nvideo.name=user
+    await nvideo.save() 
+    
+    user.video.push(nvideo)
+    await user.save()
+    .then((user)=>{
         res.json({
-            message : 'Employee added successfully'
-        })
-    })
-    .catch(error =>{
-        res.json({
-            message : 'An error occured!'
+            message : "Successfully added!"
         })
     })
 }
 
- module.exports= {
-     index, store
+const getVideo= async(req, res, next)=>{
+    const { id } = req.params
+    const video = await Video.findById(id)
+    .then((user)=>{
+        res.json(video)
+    })
+}
+
+module.exports= {
+    store, getVideo, index
  }

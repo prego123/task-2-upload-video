@@ -13,10 +13,10 @@ var storage = multer.diskStorage({
 
 var upload = multer({
     storage : storage,
-    fileFilter : function(req, file, callback){
+    /*fileFilter : function(req, file, callback){
         if(
-            file.mimetype== "video/mp4" ||
-            file.mimetype == "video/avi"
+            file.mimetype== "video/jpg" ||
+            file.mimetype == "video/png"
         ){
             callback(null, true)
         }
@@ -26,7 +26,7 @@ var upload = multer({
          }   
     },
     limits :{
-        fileSize : 1024*1024*5
-    }
+        fileSize : 1024*1024*2
+    }*/
 })
 module.exports = upload

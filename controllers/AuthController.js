@@ -2,6 +2,7 @@ const User = require('../models/User')
 const Video = require('../models/Video')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { cloudinary } = require('../middleware/cloudinary')
 
 const register = (req, res, next) =>{
     bcrypt.hash(req.body.password, 10, function(err, hashedPass){
@@ -58,13 +59,10 @@ const getUserVideos = async(req, res, next)=>{
 
 const newUserVideos = async(req, res, next)=>{
     const { id } = req.params
-
-    const newVideo = new Video()
-    if(req.file)
-    {
-        newVideo.video = req.file.path
-    }
-
+    const result = await cloudinary.uploader.upload(req.file.path)
+    const newVideo = new Video({
+        video : result.secure_url
+    })
     const us = await User.findById(id)
 
     newVideo.name= us

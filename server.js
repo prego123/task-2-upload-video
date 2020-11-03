@@ -22,7 +22,7 @@ app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use('/uploads', express.static('uploads'))
-
+app.use(express.json({ limit : '50mb'}))
 
 const PORT=process.env.PORT || 3000
 
